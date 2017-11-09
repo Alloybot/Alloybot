@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 import request = require('request');
 
 interface LooseObject {
@@ -61,3 +62,12 @@ export class twitch_api_library {
 
 	}
 }
+=======
+class twitch_api_library {
+  private ERROR: any;
+
+  constructor(private CLIENT_ID: string, private CLIENT_SECRET?: string, private OPTIONS?: object) {
+
+  }
+}
+>>>>>>> Stashed changes
