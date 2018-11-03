@@ -1,40 +1,52 @@
 {
-  "name": "alloybot",
+  "name": "alloybot-core",
   "version": "0.0.0",
-  "description": "Chat bot for Twitch",
+  "description": "Multipurpose any-bot. Let your imagination run wild.",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Alloybot/Alloybot.git"
+    "url": "git+https://github.com/AlloybotDevTeam/alloybot-core.git"
   },
-  "author": "",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/Alloybot/Alloybot/issues"
-  },
-  "homepage": "https://github.com/Alloybot/Alloybot#readme",
+  "keywords": [
+    "alloybot",
+    "javascript",
+    "nodejs",
+    "bot",
+    "discord",
+    "twitch",
+    "module"
+  ],
   "dependencies": {
-    "bluebird": "^3.5.1",
-    "chalk": "^2.3.0",
-    "core-js": "^2.5.1",
-    "dotenv": "^4.0.0",
-    "eris": "^0.8.0",
-    "express": "^4.16.2",
-    "express-session": "^1.15.6",
-    "fs-extra": "^4.0.2",
-    "handlebars": "^4.0.11",
-    "mongodb": "^2.2.33",
-    "passport": "^0.4.0",
-    "passport-oauth": "^1.0.0",
-    "request": "^2.83.0",
-    "request-promise": "^4.2.2",
-    "tmi.js": "^1.2.1",
-    "tracer": "^0.8.11",
-    "twit": "^2.2.9",
-    "typescript": "^2.6.1",
-    "watch": "^1.0.2"
+    "chalk": "^2.4.1",
+    "discord.js": "^11.4.2",
+    "dotenv": "^6.1.0",
+    "figures": "^2.0.0",
+    "mongodb": "^3.1.8",
+    "node-opus": "^0.3.1",
+    "opusscript": "0.0.6",
+    "signale": "^1.3.0"
+  },
+  "author": "Taylor Stapleton",
+  "license": "GPL",
+  "bugs": {
+    "url": "https://github.com/AlloybotDevTeam/alloybot-core/issues"
+  },
+  "homepage": "https://github.com/AlloybotDevTeam/alloybot-core#readme",
+  "signale": {
+    "coloredInterpolation": false,
+    "displayScope": false,
+    "displayBadge": true,
+    "displayDate": false,
+    "displayFilename": false,
+    "displayLabel": true,
+    "displayTimestamp": true,
+    "underlineLabel": false,
+    "underlineMessage": false,
+    "underlinePrefix": false,
+    "underlineSuffix": false,
+    "uppercaseLabel": false
   }
 }
