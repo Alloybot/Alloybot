@@ -3,6 +3,8 @@
  ******************/
 require('./lib/format');
 
+const fs = require('fs');
+const path = require('path');
 const EventEmitter = require('events').EventEmitter;
 const mongodb = require('mongodb').MongoClient;
 const discordjs = require('discord.js');
@@ -173,4 +175,7 @@ function onMessage(message) {
 /***********
  * Modules *
  ***********/
-require('./modules/example/index');
+fs.readdirSync('./modules').forEach(module => {
+  if (module.includes('example')) return;
+  require(path.join(__dirname, `./modules/${module}`));
+});
