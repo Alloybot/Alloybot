@@ -34,5 +34,5 @@ Language options are extensive. Any languages other than JS would need the modul
 - Solidity using [solidity-to-abi](https://www.npmjs.com/package/solidity-to-abi)
 - Plenty more where that came from.
 
-On top of there being lots of language support, NodeJS is crossplatform. Anyone on any system with near any language can make Alloybot do anything.
+On top of there being lots of language support, NodeJS is crossplatform. Anyone on any system with near any language can make Alloybot do anything. 
 Anything is used loosely since there are some amazing people out there with unique skillsets, that it would not surprise me if someone made a module for Alloybot that would control their smart home products from Discord or Twitch Chat.
