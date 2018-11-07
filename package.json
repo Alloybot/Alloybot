@@ -20,6 +20,9 @@
     "module"
   ],
   "dependencies": {
+    "@mixer/client-node": "^3.3.0",
+    "@types/mongodb": "^3.1.14",
+    "anesidora": "^1.2.1",
     "chalk": "^2.4.1",
     "discord.js": "^11.4.2",
     "dotenv": "^6.1.0",
@@ -27,10 +30,14 @@
     "mongodb": "^3.1.8",
     "node-opus": "^0.3.1",
     "opusscript": "0.0.6",
-    "signale": "^1.3.0"
+    "signale": "^1.3.0",
+    "simple-youtube-api": "^5.0.2",
+    "twitch-js": "^1.2.15",
+    "twitter": "^1.7.1",
+    "ytdl-core": "^0.27.1"
   },
   "author": "Taylor Stapleton",
-  "license": "GPL",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/AlloybotDevTeam/alloybot-core/issues"
   },
@@ -48,5 +55,9 @@
     "underlinePrefix": false,
     "underlineSuffix": false,
     "uppercaseLabel": false
+  },
+  "devDependencies": {
+    "@types/node": "^10.12.2",
+    "@types/twitter": "0.0.28"
   }
 }
