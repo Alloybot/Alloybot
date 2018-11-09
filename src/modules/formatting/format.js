@@ -1,3 +1,9 @@
+module.exports = function(init, callback) {
+  let passback = { steps: 2 };
+  _logger.info(`S 1/2 | M ${init.number}/${init.total} | Adding prototypes`);
+  callback(passback);
+};
+
 /**
  * String Prototypes
  */
@@ -25,6 +31,12 @@ String.prototype.underline = function() {
 
 String.prototype.prefixed = function() {
   return process.env['CMD_PREFIX'] + this;
+};
+
+String.prototype.capitalize = function() {
+  let s = this.split('');
+  s[0] = s[0].toUpperCase();
+  return s.join('');
 };
 
 String.prototype.newLine = '\r\n';

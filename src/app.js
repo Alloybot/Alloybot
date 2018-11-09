@@ -1,7 +1,6 @@
 const fs = require('fs');
 const path = require('path');
 const EventEmitter = require('events').EventEmitter;
-const { Signale } = require('signale');
 
 /***********
  * Globals *
@@ -57,9 +56,9 @@ modules.forEach(module => {
           },
           passback => {
             _logger.success(
-              `S 1/${passback.steps} | M ${modules.indexOf(module) + 1}/${
-                modules.length
-              } | Loaded ${module}`
+              `S ${passback.steps}/${passback.steps} | M ${modules.indexOf(
+                module
+              ) + 1}/${modules.length} | Loaded ${module}`
             );
           }
         );
@@ -67,6 +66,7 @@ modules.forEach(module => {
     });
   } catch (error) {
     failureCount++;
+    _logger.fatal(error);
     _logger.fatal(
       `S 0/1 | M ${modules.indexOf(module) + 1}/${
         modules.length
