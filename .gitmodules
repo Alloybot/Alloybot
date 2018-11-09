@@ -1,0 +1,3 @@
+[submodule "discord-musicbot"]
+	path = discord-musicbot
+	url = https://github.com/AlloybotDevTeam/alloybot-discord-musicbot
