@@ -1,9 +1,3 @@
-module.exports = function(init, callback) {
-  let passback = { steps: 2 };
-  _logger.info(`S 1/2 | M ${init.number}/${init.total} | Adding prototypes`);
-  callback(passback);
-};
-
 /**
  * String Prototypes
  */

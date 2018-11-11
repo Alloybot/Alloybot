@@ -54,7 +54,7 @@ const opts = {
 };
 
 module.exports = new Signale(opts);
-_options.set('signale', opts);
+alloybot.get('options').set('signale', opts);
 
 // Log Levels
 // Defualt: await, complete, error, debug, fatal, fav, info, note, pause, pending, star, start, success, warn, watch, log
