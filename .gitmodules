@@ -1,3 +1,11 @@
 [submodule "src/modules/discord-musicbot"]
 	path = src/modules/discord-musicbot
-	url = https://github.com/AlloybotDevTeam/alloybot-discord-musicbot
+	url = https://github.com/AlloybotDevTeam/discord-musicbot
+	
+[submodule "src/modules/discord"]
+	path = src/modules/discord
+	url = https://github.com/AlloybotDevTeam/discord
+	
+[submodule "src/modules/commander"]
+	path = src/modules/commander
+	url = https://github.com/AlloybotDevTeam/commander
