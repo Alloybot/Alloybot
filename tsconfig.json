@@ -1,9 +1,6 @@
 {
   "compilerOptions": {
-    "baseUrl": "./src",
-    "paths": {
-      "*": ["types/*"],
-      "Services": ["./lib/services"]
-    }
+    "baseUrl": "./",
+    "lib": ["esnext"]
   }
 }

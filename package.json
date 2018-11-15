@@ -20,21 +20,9 @@
     "module"
   ],
   "dependencies": {
-    "@mixer/client-node": "^3.3.0",
-    "@types/mongodb": "^3.1.14",
-    "anesidora": "^1.2.1",
     "chalk": "^2.4.1",
-    "discord.js": "^11.4.2",
-    "dotenv": "^6.1.0",
     "figures": "^2.0.0",
-    "mongodb": "^3.1.8",
-    "node-opus": "^0.3.1",
-    "opusscript": "0.0.6",
-    "signale": "^1.3.0",
-    "simple-youtube-api": "^5.0.2",
-    "twitch-js": "^1.2.15",
-    "twitter": "^1.7.1",
-    "ytdl-core": "^0.27.1"
+    "signale": "^1.3.0"
   },
   "author": "Taylor Stapleton",
   "license": "MIT",
@@ -52,12 +40,12 @@
     "displayTimestamp": true,
     "underlineLabel": false,
     "underlineMessage": false,
-    "underlinePrefix": false,
+    "underlinePrefix": true,
     "underlineSuffix": false,
-    "uppercaseLabel": false
+    "uppercaseLabel": true
   },
   "devDependencies": {
-    "@types/node": "^10.12.2",
-    "@types/twitter": "0.0.28"
+    "@types/node": "^10.12.6",
+    "@types/signale": "^1.2.0"
   }
 }
