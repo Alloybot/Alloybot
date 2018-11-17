@@ -1,10 +1,4 @@
 {
-  "Alloybot": {
-    "name": "DJ Stapleton"
-  },
-  "Commander": {
-    "prefix": ">"
-  },
   "Signale": {
     "types": {
       "await": {

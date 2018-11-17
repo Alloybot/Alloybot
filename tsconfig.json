@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
     "baseUrl": "./",
-    "lib": ["esnext"]
-  }
+    "lib": ["es2018"]
+  },
+  "include": ["src/modules/**/*"],
+  "exclude": ["node_modules", "src/modules/**/node_modules"]
 }

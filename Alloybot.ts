@@ -3,111 +3,29 @@ import { Signale as SignaleType } from 'signale';
 import { format } from 'util';
 import path = require('path');
 import fs = require('fs');
+import { exec } from 'child_process';
 
-export const Settings = require('./Settings.json');
+const Settings = require('./Settings.json');
 const { Signale } = require('signale');
 
-class Alloybot extends EventEmitter {
-  public name: String = Settings.Alloybot.name;
-  public connections = new Map<String, IConnection>();
-  public modules = new Map<String, IModule>();
-  public settings = Settings;
-
-  private logger = new Logger(this.name);
-
-  constructor() {
-    super();
-    this.emit('started', this.name);
-  }
-
-  private dependenciesAreLoaded(name: String): Boolean {
-    let dependencyList = this.modules.get(name).dependencies,
-      dependencyCount = 0,
-      missingDeps = [];
-
-    for (let dep in dependencyList) {
-      if (this.modules.has(dep)) {
-        dependencyCount++;
-      } else {
-        missingDeps.push(dep);
-      }
+fs.readdir(__dirname, (error, files) => {
+  if (error) return;
+  files.forEach(file => {
+    if (path.parse(file).ext == '.env') {
+      require('dotenv').config({ path: file });
     }
-
-    if (dependencyCount == dependencyList.length) {
-      return true;
-    } else {
-      this.logger.error(
-        `${name} is missing ${dependencyCount}/${
-          dependencyList.length
-        } dependencies. - ${missingDeps.join(', ')}`
-      );
-    }
-  }
-
-  public registerModule(moduleClass: IModule): void {
-    if (this.dependenciesAreLoaded(typeof moduleClass)) {
-      this.modules.set(typeof moduleClass, moduleClass);
-      this.emit('ModuleBase.registered', moduleClass);
-    } else {
-      this.emit('ModuleBase.skipped', typeof moduleClass);
-    }
-  }
-
-  public isModuleLoaded(name: String): Boolean {
-    return this.modules.has(name);
-  }
-
-  public getModuleCount(): Number {
-    return this.modules.size;
-  }
-
-  public getModules(): Map<String, IModule> {
-    return this.modules;
-  }
-
-  public getModule(name: String): any {
-    return this.modules.get(name);
-  }
-
-  public registerConnection(connection: IConnection): void {
-    if (this.dependenciesAreLoaded(typeof connection)) {
-      this.connections.set(typeof connection, connection);
-      this.emit('connection.registered', connection);
-    } else {
-      this.emit('connection.skipped', typeof connection);
-    }
-  }
-
-  public isConnectionLoaded(name: String): Boolean {
-    return this.connections.has(name);
-  }
-
-  public getConnectionCount(): Number {
-    return this.connections.size;
-  }
-
-  public getConnections(): Map<String, IConnection> {
-    return this.connections;
-  }
-
-  public getConnection(name: String): any {
-    return this.connections.get(name);
-  }
-}
-
-let INSTANCE = new Alloybot();
-
-export { INSTANCE as Alloybot };
+  });
+});
 
 export interface IConnection {
-  readonly name: String;
-  readonly dependencies: Array<String>;
-  client: any;
+  name: String;
+  dependencies: String[];
+  connection: any;
 }
 
 export interface IModule {
-  readonly name: String;
-  readonly dependencies: Array<String>;
+  name: String;
+  dependencies: String[];
 }
 
 export class Logger {
@@ -240,12 +158,10 @@ export class Loader {
   constructor(directory: fs.PathLike) {
     // Get "direcory" stats
     fs.lstat(directory, function(error, stats) {
-      // If "directory" is a directory
       if (stats.isDirectory()) {
         // Get all files in "directory"
-        let directoryList = fs.readdirSync(directory);
-        let f,
-          l = directoryList.length;
+        let directoryList = fs.readdirSync(directory),
+          f;
         for (let file in directoryList) {
           // Join the current directory and each file
           f = path.join(directory.toString(), directoryList[file]);
@@ -255,9 +171,123 @@ export class Loader {
         // If "directory" is a .js file, load it, and run the init function.
       } else {
         let file = path.parse(directory.toString());
-        if (file.ext == '.js')
-          return { name: file.name, file: require(directory.toString())() };
+        if (file.ext == '.js') require(directory.toString());
       }
     });
   }
 }
+
+class RootModuleLoader {
+  private root = './src/modules';
+  constructor() {
+    fs.readdir(this.root, (error, modules) => {
+      if (error) console.error(error);
+      modules.forEach(_module => {
+        let modulepath = path.join(this.root, _module);
+        let _package = require('./' + path.join(modulepath, 'package.json'));
+
+        if (_package.main.endsWith('.js'))
+          require('./' + path.join(modulepath, _package.main));
+        if (_package.main.endsWith('.ts')) {
+          require('./' +
+            path.join(modulepath, _package.main.replace('.ts', '.js')));
+        }
+      });
+    });
+  }
+}
+
+class Alloybot extends EventEmitter {
+  public name: String = process.env['ALLOYBOT_NAME'];
+  public connections = new Map<String, IConnection>();
+  public modules = new Map<String, IModule>();
+  public settings = Settings;
+
+  private logger = new Logger(this.name);
+
+  constructor() {
+    super();
+    new RootModuleLoader();
+    this.emit('started', this.name);
+  }
+
+  private dependenciesAreLoaded(name: String): Boolean {
+    let dependencyList = this.modules.get(name).dependencies,
+      dependencyCount = 0,
+      missingDeps = [];
+
+    for (let dep in dependencyList) {
+      if (this.modules.has(dep)) {
+        dependencyCount++;
+      } else {
+        missingDeps.push(dep);
+      }
+    }
+
+    if (dependencyCount == dependencyList.length) {
+      return true;
+    } else {
+      this.logger.error(
+        `${name} is missing ${dependencyCount}/${
+          dependencyList.length
+        } dependencies. - ${missingDeps.join(', ')}`
+      );
+    }
+  }
+
+  public registerModule(moduleClass: IModule): void {
+    this.modules.set(moduleClass.name, moduleClass);
+    this.emit('module.registered', moduleClass);
+  }
+
+  public isModuleLoaded(name: String): Boolean {
+    return this.modules.has(name);
+  }
+
+  public getModuleCount(): Number {
+    return this.modules.size;
+  }
+
+  public getModules(): Map<String, IModule> {
+    return this.modules;
+  }
+
+  public getModule(name: String): any {
+    return this.modules.get(name);
+  }
+
+  public registerConnection(connection: IConnection): void {
+    this.connections.set(connection.name, connection.connection);
+    this.emit('connection.registered', connection);
+  }
+
+  public isConnectionLoaded(name: String): Boolean {
+    return this.connections.has(name);
+  }
+
+  public getConnectionCount(): Number {
+    return this.connections.size;
+  }
+
+  public getConnections(): Map<String, IConnection> {
+    return this.connections;
+  }
+
+  public getConnection(name: String): any {
+    return this.connections.get(name);
+  }
+}
+
+let INSTANCE = new Alloybot();
+
+const logger = new Logger('global');
+
+INSTANCE.on('module.registered', module => {
+  logger.info('Module Registered: ' + module.name);
+});
+
+INSTANCE.on('connection.registered', connection => {
+  logger.info('Connection Registered: ' + connection.name);
+});
+
+export { INSTANCE as Alloybot };
