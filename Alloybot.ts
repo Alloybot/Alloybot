@@ -100,14 +100,14 @@ let INSTANCE = new Alloybot();
 export { INSTANCE as Alloybot };
 
 export interface IConnection {
-  name: String;
-  dependencies: Array<String>;
+  readonly name: String;
+  readonly dependencies: Array<String>;
   client: any;
 }
 
 export interface IModule {
-  name: String;
-  dependencies: Array<String>;
+  readonly name: String;
+  readonly dependencies: Array<String>;
 }
 
 export class Logger {
