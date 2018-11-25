@@ -3,6 +3,6 @@
     "baseUrl": "./",
     "lib": ["es2018"]
   },
-  "include": ["src/modules/**/*"],
-  "exclude": ["node_modules", "src/modules/**/node_modules"]
+  "include": ["src/plugins/**/*"],
+  "exclude": ["node_modules", "src/plugins/**/node_modules"]
 }
