@@ -1,4 +1,8 @@
 # Alloybot Core
+[![Security](http://sq.taylorstapleton.ca/api/project_badges/measure?project=AlloybotCore&metric=security_rating)](http://sq.taylorstapleton.ca/dashboard?id=AlloybotCore)
+[![Maintainability](http://sq.taylorstapleton.ca/api/project_badges/measure?project=AlloybotCore&metric=sqale_rating)](http://sq.taylorstapleton.ca/dashboard?id=AlloybotCore)
+[![Lines of Code](http://sq.taylorstapleton.ca/api/project_badges/measure?project=AlloybotCore&metric=ncloc)](http://sq.taylorstapleton.ca/dashboard?id=AlloybotCore)
+
 ## Powerful and Versatile Module Loader
 
 ### Focus and Motivation
