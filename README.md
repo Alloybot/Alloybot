@@ -1,3 +1,5 @@
+## Readme rewrite and documentation coming soon.
+
 # Alloybot Core
 [![Security](http://sq.taylorstapleton.ca/api/project_badges/measure?project=AlloybotCore&metric=security_rating)](http://sq.taylorstapleton.ca/dashboard?id=AlloybotCore)
 [![Maintainability](http://sq.taylorstapleton.ca/api/project_badges/measure?project=AlloybotCore&metric=sqale_rating)](http://sq.taylorstapleton.ca/dashboard?id=AlloybotCore)
@@ -26,7 +28,7 @@ There can be some modules that do not need any configuration. Such as a Discord 
 Considering they already have a module that adds Discord connectivity and its configured.
 
 ### Creating a module
-The bot is written in Javascript with the use of NodeJS.
+The bot is written in Javascript and Typescript with the use of NodeJS.
 Language options are extensive. Any languages other than JS would need the module entry file to be in JS.
 
 - Typescript using [typescript](https://www.npmjs.com/package/typescript)
