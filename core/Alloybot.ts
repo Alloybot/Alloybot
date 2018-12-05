@@ -1,143 +1,28 @@
+import { exec } from 'child_process';
 import { EventEmitter } from 'events';
-import { Signale as SignaleType } from 'signale';
-import { format } from 'util';
+import { Signale } from 'signale';
 import path = require('path');
 import fs = require('fs');
 
-const Settings = require('./Settings.json');
-const { Signale } = require('signale');
-
-fs.readdir(__dirname, (error, files) => {
-  if (error) return;
-  files.forEach(file => {
-    if (path.parse(file).ext == '.env') {
-      require('dotenv').config({ path: file });
-    }
-  });
-});
-
-export class Logger {
-  private logger: SignaleType = new Signale(Settings.Signale);
-  private scope: string;
-
-  constructor(scope: string) {
-    this.scope = scope;
-  }
-
-  private formatMessage(message: object | string): string {
-    if (typeof message == 'object') return format('%o', message);
-    if (typeof message == 'string') return format('%s', message);
-  }
-
-  public await(message: object | string): void {
-    this.logger.await({
-      prefix: this.scope,
-      message: this.formatMessage(message)
+export class Logger extends Signale {
+  constructor(scope: string, interactive?: boolean) {
+    super({
+      interactive: interactive,
+      scope: scope,
+      types: require('./config/_Logger.json').Signale.types
     });
-  }
-
-  public complete(message: object | string): void {
-    this.logger.complete({
-      prefix: this.scope,
-      message: this.formatMessage(message)
-    });
-  }
-
-  public error(message: object | string): void {
-    this.logger.error({
-      prefix: this.scope,
-      message: this.formatMessage(message)
-    });
-  }
-
-  public debug(message: object | string): void {
-    this.logger.debug({
-      prefix: this.scope,
-      message: this.formatMessage(message)
-    });
-  }
-
-  public fatal(message: object | string): void {
-    this.logger.fatal({
-      prefix: this.scope,
-      message: this.formatMessage(message)
-    });
-  }
-
-  public fav(message: object | string): void {
-    this.logger.fav({
-      prefix: this.scope,
-      message: this.formatMessage(message)
-    });
-  }
-
-  public info(message: object | string): void {
-    this.logger.info({
-      prefix: this.scope,
-      message: this.formatMessage(message)
-    });
-  }
-
-  public log(message: object | string): void {
-    this.logger.log({
-      prefix: this.scope,
-      message: this.formatMessage(message)
-    });
-  }
-
-  public note(message: object | string): void {
-    this.logger.note({
-      prefix: this.scope,
-      message: this.formatMessage(message)
-    });
-  }
-
-  public pause(message: object | string): void {
-    this.logger.pause({
-      prefix: this.scope,
-      message: this.formatMessage(message)
-    });
-  }
-
-  public pending(message: object | string): void {
-    this.logger.pending({
-      prefix: this.scope,
-      message: this.formatMessage(message)
-    });
-  }
-
-  public star(message: object | string): void {
-    this.logger.star({
-      prefix: this.scope,
-      message: this.formatMessage(message)
-    });
-  }
-
-  public start(message: object | string): void {
-    this.logger.start({
-      prefix: this.scope,
-      message: this.formatMessage(message)
-    });
-  }
-
-  public success(message: object | string): void {
-    this.logger.success({
-      prefix: this.scope,
-      message: this.formatMessage(message)
-    });
-  }
-
-  public warn(message: object | string): void {
-    this.logger.warn({
-      prefix: this.scope,
-      message: this.formatMessage(message)
-    });
-  }
-
-  public watch(message: object | string): void {
-    this.logger.watch({
-      prefix: this.scope,
-      message: this.formatMessage(message)
+    this.config({
+      displayScope: true,
+      displayBadge: false,
+      displayDate: false,
+      displayFilename: false,
+      displayLabel: true,
+      displayTimestamp: true,
+      underlineLabel: false,
+      underlineMessage: false,
+      underlinePrefix: false,
+      underlineSuffix: false,
+      uppercaseLabel: true
     });
   }
 }
@@ -167,11 +52,12 @@ export class Loader {
 
 class PluginLoader {
   private root = './src/plugins';
+  private logger = new Logger('Plugin Loader');
   constructor() {
-    fs.readdir(this.root, (error, plugins) => {
-      if (error) console.error(error);
-      plugins.forEach(_module => {
-        let pluginpath = path.join(this.root, _module);
+    fs.readdir(path.join(__dirname, this.root), (error, plugins) => {
+      if (error) this.logger.error(error);
+      plugins.forEach(_plugin => {
+        let pluginpath = path.join(this.root, _plugin);
         let _package = require('./' + path.join(pluginpath, 'package.json'));
 
         if (_package.main.endsWith('.js'))
@@ -179,6 +65,31 @@ class PluginLoader {
         if (_package.main.endsWith('.ts')) {
           require('./' +
             path.join(pluginpath, _package.main.replace('.ts', '.js')));
+        }
+      });
+    });
+  }
+}
+
+class InitializePlugins {
+  private root = './src/plugins';
+  private logger = new Logger('Init');
+  constructor() {
+    fs.readdir(path.join(__dirname, this.root), (error, plugins) => {
+      if (error) this.logger.error(error);
+      plugins.forEach(_plugin => {
+        let pluginpath = path.join(this.root, _plugin);
+        if (!fs.existsSync(path.join(pluginpath, '/node_modules'))) {
+          process.chdir(path.join(__dirname, pluginpath));
+          exec('npm install ', (npmerror, npmout, npmerr) => {
+            this.logger.info('Installing Packages');
+            exec(
+              'tsc --build ./tsconfig.json',
+              (typeerror, typeout, typeerr) => {
+                this.logger.info('Compiling Plugins');
+              }
+            );
+          });
         }
       });
     });
@@ -201,16 +112,15 @@ export interface IPlugin {
 }
 
 class Alloybot extends EventEmitter {
-  public name: string = process.env['ALLOYBOT.NAME'];
+  public name: string = process.env['ALLOYBOT_NAME'];
   public connections = new Map<string, IConnection>();
   public plugins = new Map<string, IPlugin>();
-  public settings = Settings;
 
   private logger = new Logger(this.name);
 
   constructor() {
     super();
-    new PluginLoader();
+    new InitializePlugins();
     this.emit('started', this.name);
   }
 
@@ -319,7 +229,13 @@ class Alloybot extends EventEmitter {
 
 let INSTANCE = new Alloybot();
 
-const logger = new Logger('global');
+const logger = new Logger('Alloybot');
+
+INSTANCE.on('started', name => {
+  logger.info('Started: ' + name);
+  process.chdir(path.join(__dirname, '../../..'));
+  new PluginLoader();
+});
 
 INSTANCE.on('plugin.registered', plugin => {
   logger.info('Plugin Registered: ' + plugin.name);

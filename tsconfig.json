@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "baseUrl": "./",
-    "lib": ["es2018"]
+    "lib": ["es2018"],
+    "resolveJsonModule": true
   },
-  "include": ["src/plugins/**/*"],
-  "exclude": ["node_modules", "src/plugins/**/node_modules"]
+  "include": ["core/Alloybot.ts"]
 }

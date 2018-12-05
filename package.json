@@ -2,10 +2,11 @@
   "name": "alloybot-core",
   "version": "0.0.0",
   "description": "Multipurpose any-bot. Let your imagination run wild.",
-  "main": "app.js",
+  "main": "Alloybot.ts",
   "scripts": {
-    "dev": "tsc --build ./tsconfig.json; node Alloybot.js",
-    "start": "node Alloybot.js"
+    "start": "node Alloybot.js",
+    "watch": "tsc -w tsconfig.json",
+    "build": "tsc tsconfig.json"
   },
   "repository": {
     "type": "git",
@@ -21,31 +22,16 @@
     "module"
   ],
   "dependencies": {
-    "chalk": "^2.4.1",
-    "dotenv": "^6.1.0",
-    "figures": "^2.0.0",
-    "signale": "^1.3.0",
     "@types/node": "^10.12.6",
-    "@types/signale": "^1.2.0"
+    "@types/signale": "^1.2.0",
+    "chalk": "^2.4.1",
+    "figures": "^2.0.0",
+    "signale": "^1.3.0"
   },
   "author": "Taylor Stapleton",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/AlloybotDevTeam/alloybot-core/issues"
   },
-  "homepage": "https://github.com/AlloybotDevTeam/alloybot-core#readme",
-  "signale": {
-    "coloredInterpolation": false,
-    "displayScope": false,
-    "displayBadge": true,
-    "displayDate": false,
-    "displayFilename": false,
-    "displayLabel": true,
-    "displayTimestamp": true,
-    "underlineLabel": false,
-    "underlineMessage": false,
-    "underlinePrefix": true,
-    "underlineSuffix": false,
-    "uppercaseLabel": true
-  }
+  "homepage": "https://github.com/AlloybotDevTeam/alloybot-core#readme"
 }
