@@ -4,9 +4,10 @@
   "description": "Multipurpose any-bot. Let your imagination run wild.",
   "main": "Alloybot.ts",
   "scripts": {
-    "start": "node Alloybot.js",
-    "watch": "tsc -w tsconfig.json",
-    "build": "tsc tsconfig.json"
+    "start": "node core/Alloybot.js",
+    "watch": "tsc -b --clean --watch tsconfig.json",
+    "build": "tsc -b --verbose tsconfig.json",
+    "clean": "tsc -b --clean tsconfig.json"
   },
   "repository": {
     "type": "git",
@@ -24,8 +25,6 @@
   "dependencies": {
     "@types/node": "^10.12.6",
     "@types/signale": "^1.2.0",
-    "chalk": "^2.4.1",
-    "figures": "^2.0.0",
     "signale": "^1.3.0"
   },
   "author": "Taylor Stapleton",

@@ -2,7 +2,7 @@
  * Alloybot      *
  * generateinvite.js *
  *********************/
-const lang = _langfiles.get('alloybot');
+const commander = alloybot.get('modules').get('commander');
 
 module.exports = function() {
   let metadata = {
@@ -15,19 +15,18 @@ module.exports = function() {
     reason: null //"For the bot creator only."
   };
 
-  _bot.commands.set(metadata.name, main);
-  _bot.metadata.set(metadata.name, metadata);
-  _bot.groups[metadata.type].push(metadata.name);
+  commander.commands.set(metadata.name, main);
+  commander.metadata.set(metadata.name, metadata);
 };
 
 function main(message) {
   connections
     .get('discord')
-    .client.generateInvite(_bot.permissions)
-    .then((invite) => {
+    .client.generateInvite(commander.permissions)
+    .then(invite => {
       message.channel.send('%s'.format(invite));
     })
-    .catch((error) => {
+    .catch(error => {
       message.channel.send(lang.general.errorBlock.format(error));
     });
 }

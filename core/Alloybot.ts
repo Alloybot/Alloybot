@@ -1,127 +1,22 @@
-import { exec } from 'child_process';
-import { EventEmitter } from 'events';
-import { Signale } from 'signale';
-import path = require('path');
-import fs = require('fs');
+import * as event from 'events';
+import * as Util from './lib/Util';
+import * as Type from './lib/Common';
+import { ConfigBuilder } from './lib/ConfigBuilder';
 
-export class Logger extends Signale {
-  constructor(scope: string, interactive?: boolean) {
-    super({
-      interactive: interactive,
-      scope: scope,
-      types: require('./config/_Logger.json').Signale.types
-    });
-    this.config({
-      displayScope: true,
-      displayBadge: false,
-      displayDate: false,
-      displayFilename: false,
-      displayLabel: true,
-      displayTimestamp: true,
-      underlineLabel: false,
-      underlineMessage: false,
-      underlinePrefix: false,
-      underlineSuffix: false,
-      uppercaseLabel: true
-    });
-  }
-}
+class Alloybot extends event.EventEmitter {
+  public name: string = require('./config/Alloybot').name;
+  public connections = new Map<string, Type.IConnection>();
+  public plugins = new Map<string, Type.IPlugin>();
 
-export class Loader {
-  constructor(directory: fs.PathLike) {
-    // Get "direcory" stats
-    fs.lstat(directory, function(error, stats) {
-      if (stats.isDirectory()) {
-        // Get all files in "directory"
-        let directoryList = fs.readdirSync(directory),
-          f;
-        for (let file in directoryList) {
-          // Join the current directory and each file
-          f = path.join(directory.toString(), directoryList[file]);
-          // Instantiate this class again but with the new directory
-          new Loader(f);
-        }
-        // If "directory" is a .js file, load it, and run the init function.
-      } else {
-        let file = path.parse(directory.toString());
-        if (file.ext == '.js') require(directory.toString());
-      }
-    });
-  }
-}
-
-class PluginLoader {
-  private root = './src/plugins';
-  private logger = new Logger('Plugin Loader');
-  constructor() {
-    fs.readdir(path.join(__dirname, this.root), (error, plugins) => {
-      if (error) this.logger.error(error);
-      plugins.forEach(_plugin => {
-        let pluginpath = path.join(this.root, _plugin);
-        let _package = require('./' + path.join(pluginpath, 'package.json'));
-
-        if (_package.main.endsWith('.js'))
-          require('./' + path.join(pluginpath, _package.main));
-        if (_package.main.endsWith('.ts')) {
-          require('./' +
-            path.join(pluginpath, _package.main.replace('.ts', '.js')));
-        }
-      });
-    });
-  }
-}
-
-class InitializePlugins {
-  private root = './src/plugins';
-  private logger = new Logger('Init');
-  constructor() {
-    fs.readdir(path.join(__dirname, this.root), (error, plugins) => {
-      if (error) this.logger.error(error);
-      plugins.forEach(_plugin => {
-        let pluginpath = path.join(this.root, _plugin);
-        if (!fs.existsSync(path.join(pluginpath, '/node_modules'))) {
-          process.chdir(path.join(__dirname, pluginpath));
-          exec('npm install ', (npmerror, npmout, npmerr) => {
-            this.logger.info('Installing Packages');
-            exec(
-              'tsc --build ./tsconfig.json',
-              (typeerror, typeout, typeerr) => {
-                this.logger.info('Compiling Plugins');
-              }
-            );
-          });
-        }
-      });
-    });
-  }
-}
-
-export type DependantList = (IPlugin | IConnection)[];
-
-export interface IConnection {
-  readonly name: string;
-  readonly dependencies: string[];
-  readonly dependants: DependantList;
-  connection: any;
-}
-
-export interface IPlugin {
-  readonly name: string;
-  readonly dependencies: string[];
-  readonly dependants: DependantList;
-}
-
-class Alloybot extends EventEmitter {
-  public name: string = process.env['ALLOYBOT_NAME'];
-  public connections = new Map<string, IConnection>();
-  public plugins = new Map<string, IPlugin>();
-
-  private logger = new Logger(this.name);
+  private logger = new Util.Logger(this.name);
+  private config = new ConfigBuilder('test/bois/Alloybot');
 
   constructor() {
     super();
-    new InitializePlugins();
+    new Util.Setup();
     this.emit('started', this.name);
+    this.config.addOption('name', [ 'string' ], 'Alloybot Test Subject', 'Name of the bot.');
+    this.config.close();
   }
 
   private areDependenciesLoaded(name: string): boolean {
@@ -149,7 +44,7 @@ class Alloybot extends EventEmitter {
     }
   }
 
-  public getDependants(name: string): DependantList {
+  public getDependants(name: string): Type.IPlugin[] {
     let dependants = [];
     for (let plugin in this.plugins) {
       for (let dep in this.plugins.get(plugin).dependencies) {
@@ -164,7 +59,7 @@ class Alloybot extends EventEmitter {
     return dependants;
   }
 
-  public isPluginLoaded(plugin: IPlugin): boolean;
+  public isPluginLoaded(plugin: Type.IPlugin): boolean;
   public isPluginLoaded(plugin: string): boolean;
   public isPluginLoaded(plugin): boolean {
     if (typeof plugin == 'string') {
@@ -174,7 +69,7 @@ class Alloybot extends EventEmitter {
     }
   }
 
-  public registerPlugin(plugin: IPlugin): void {
+  public registerPlugin(plugin: Type.IPlugin): void {
     if (this.plugins.has(plugin.name)) {
       this.emit('plugin.duplicate', plugin.name);
     } else {
@@ -187,7 +82,7 @@ class Alloybot extends EventEmitter {
     return this.plugins.size;
   }
 
-  public getPlugins(): Map<string, IPlugin> {
+  public getPlugins(): Map<string, Type.IPlugin> {
     return this.plugins;
   }
 
@@ -195,7 +90,7 @@ class Alloybot extends EventEmitter {
     if (this.areDependenciesLoaded(name)) return this.plugins.get(name);
   }
 
-  public registerConnection(connection: IConnection): void {
+  public registerConnection(connection: Type.IConnection): void {
     if (this.connections.has(connection.name)) {
       this.emit('connection.duplicate', connection.name);
     } else {
@@ -204,7 +99,7 @@ class Alloybot extends EventEmitter {
     }
   }
 
-  public isConnectionLoaded(connection: IConnection): boolean;
+  public isConnectionLoaded(connection: Type.IConnection): boolean;
   public isConnectionLoaded(connection: string): boolean;
   public isConnectionLoaded(connection): boolean {
     if (typeof connection == 'string') {
@@ -218,7 +113,7 @@ class Alloybot extends EventEmitter {
     return this.connections.size;
   }
 
-  public getConnections(): Map<string, IConnection> {
+  public getConnections(): Map<string, Type.IConnection> {
     return this.connections;
   }
 
@@ -229,12 +124,10 @@ class Alloybot extends EventEmitter {
 
 let INSTANCE = new Alloybot();
 
-const logger = new Logger('Alloybot');
+const logger = new Util.Logger('Alloybot');
 
 INSTANCE.on('started', name => {
   logger.info('Started: ' + name);
-  process.chdir(path.join(__dirname, '../../..'));
-  new PluginLoader();
 });
 
 INSTANCE.on('plugin.registered', plugin => {
@@ -245,4 +138,5 @@ INSTANCE.on('connection.registered', connection => {
   logger.info('Connection Registered: ' + connection.name);
 });
 
-export { INSTANCE as Alloybot };
+export default INSTANCE;
+export { Type, Util, ConfigBuilder }

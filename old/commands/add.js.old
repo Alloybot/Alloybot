@@ -1,0 +1,74 @@
+/***************
+* DJ Stapleton *
+* add.js   *
+****************/
+
+/*module.exports = function() {
+    let metadata = {
+        name: "add",
+        desc: lang.description.add,
+        usage: "add <search words|youtube link>".prefixed().inlineCode(),
+        example: "add sick boy the chainsmokers".prefixed().inlineCode(),
+        type: lang.type[3],
+        disabled: false,
+        reason: null
+    }
+
+    _musicbot.commands.set(metadata.name, main);
+    _musicbot.metadata.set(metadata.name, metadata);
+    _musicbot.groups[metadata.type].push(metadata.name);
+}
+
+const queue = mongoose.Schema({
+    guild: Number,
+    requestedBy: Number,
+    title: String,
+    duration: Number,
+    videoid: String,
+    thumbnail: String,
+    related: Array
+});
+
+const queueModel = mongoose.model("queue", queue);
+
+function main(message) {
+    let ytapi = connections.get("ytapi");
+    let queueItem = new queueModel({ 
+        guild: message.guild.id,
+        requestedBy: message.author.id
+    });
+
+    if (_musicbot.parsed.subargs.length > 1) search(message, _musicbot.parsed.subargs.join(" "));
+    else getVideo(message, _musicbot.parsed.subargs);
+}
+
+function search(message, query) {
+    ytapi.search(query, 5).then(results => {
+        //message.channel.send("Results: ${results[0].raw.id.videoId}");
+        //console.log(results[0]);
+        getVideo(message, results[0].raw.id.videoId.toString());
+    }).catch(console.error);
+}
+
+function getVideo(message, link) {
+    if (typeof link != "string") message.channel.send("Please provide either a YouTube link or something to search YouTube for.");
+
+    const ytdl = require("ytdl-core");
+    ytdl.getInfo(link, (error, info) => {
+        if (error) message.channel.send("Failed to get video info.${String.newLine}${error}");
+
+        let item = {
+            guild: message.guild.id,
+            requestedBy: message.author.id,
+            title: info.title,
+            duration: info.length_seconds / 60,
+            videoid: info.video_id,
+            thumbnail: info.thumbnail_url,
+            related: info.related_videos
+        }
+
+        queueModel.create(item, (error, item) => {
+            if (error) _logger.error("Failed to create document. ${error}");
+        });
+    });
+}*/

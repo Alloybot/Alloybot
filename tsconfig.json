@@ -1,8 +1,18 @@
 {
   "compilerOptions": {
-    "baseUrl": "./",
     "lib": ["es2018"],
-    "resolveJsonModule": true
+    "target": "es2018",
+    "module": "none",
+    "moduleResolution": "node",
+    "listFiles": true,
+    "listEmittedFiles": true,
+    "newLine": "LF",
+    "traceResolution": true,
+    "declaration": true,
+    "declarationDir": "./core/typings"
   },
-  "include": ["core/Alloybot.ts"]
+  "files": ["core/Alloybot.ts", "core/lib/ConfigBuilder.ts", "core/lib/Util.ts", "core/lib/Common.ts"],
+  "references": [
+    { "path": "core/plugins/" }
+  ]
 }
