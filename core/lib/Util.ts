@@ -50,20 +50,19 @@ class ClassLoader {
 }
 
 class PluginLoader {
-  private root = './src/plugins';
+  private root = '../plugins';
   private logger = new Logger('Plugin Loader');
   constructor() {
     fs.readdir(path.join(__dirname, this.root), (error, plugins) => {
       if (error) this.logger.error(error);
       plugins.forEach(_plugin => {
         let pluginpath = path.join(this.root, _plugin);
-        let _package = require('./' + path.join(pluginpath, 'package.json'));
+        let _package = require(path.join(pluginpath, 'package.json'));
 
         if (_package.main.endsWith('.js'))
-          require('./' + path.join(pluginpath, _package.main));
+          require(path.join(pluginpath, _package.main));
         if (_package.main.endsWith('.ts')) {
-          require('./' +
-            path.join(pluginpath, _package.main.replace('.ts', '.js')));
+          require(path.join(pluginpath, _package.main.replace('.ts', '.js')));
         }
       });
     });
@@ -71,24 +70,35 @@ class PluginLoader {
 }
 
 class Setup {
-  private root = './src/plugins';
+  private root = '../plugins';
   private logger = new Logger('Init');
   constructor() {
     fs.readdir(path.join(__dirname, this.root), (error, plugins) => {
       if (error) this.logger.error(error);
       plugins.forEach(_plugin => {
         let pluginpath = path.join(this.root, _plugin);
-        if (!fs.existsSync(path.join(pluginpath, '/node_modules'))) {
-          process.chdir(path.join(__dirname, pluginpath));
-          exec('npm install ', (npmerror, npmout, npmerr) => {
-            this.logger.info('Installing Packages');
-            exec(
-              'tsc --build',
-              (typeerror, typeout, typeerr) => {
-                this.logger.info('Compiling Plugins');
-              }
-            );
+        let stats = fs.lstatSync(path.join(__dirname, pluginpath));
+        if (!stats.isDirectory()) return;
+
+        let packageLock = require(path.join(pluginpath, 'package-lock.json'));
+        process.chdir(path.join(__dirname, pluginpath));
+
+        if (packageLock.dependencies && !fs.existsSync('node_modules')) {
+          exec('npm install', (npmerror, npmout, npmerr) => {
+            if (npmerror) this.logger.error(npmerror);
+            this.logger.info(`Installing ${_plugin}`);
           });
+          exec('npm run build', (tscerror, tscout, tscerr) => {
+            if (tscerror) this.logger.error(tscerror);
+            this.logger.info(`Building ${_plugin}`);
+          });
+          new PluginLoader();
+        } else {
+          exec('npm run build', (tscerror, tscout, tscerr) => {
+            if (tscerror) this.logger.error(tscerror);
+            this.logger.info(`Building ${_plugin}`);
+          });
+          new PluginLoader();
         }
       });
     });

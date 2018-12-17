@@ -9,13 +9,13 @@ class Alloybot extends event.EventEmitter {
   public plugins = new Map<string, Type.IPlugin>();
 
   private logger = new Util.Logger(this.name);
-  private config = new ConfigBuilder('test/bois/Alloybot');
+  private config = new ConfigBuilder('Alloybot', require('../package.json').version);
 
   constructor() {
     super();
     new Util.Setup();
     this.emit('started', this.name);
-    this.config.addOption('name', [ 'string' ], 'Alloybot Test Subject', 'Name of the bot.');
+    this.config.addOption('name', ['string'], 'Name of the bot.');
     this.config.close();
   }
 

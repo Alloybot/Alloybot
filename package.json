@@ -1,5 +1,5 @@
 {
-  "name": "alloybot-core",
+  "name": "@alloybot/alloybot",
   "version": "0.0.0",
   "description": "Multipurpose any-bot. Let your imagination run wild.",
   "main": "Alloybot.ts",

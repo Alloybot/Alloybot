@@ -2,17 +2,7 @@
   "compilerOptions": {
     "lib": ["es2018"],
     "target": "es2018",
-    "module": "none",
-    "moduleResolution": "node",
-    "listFiles": true,
-    "listEmittedFiles": true,
-    "newLine": "LF",
-    "traceResolution": true,
-    "declaration": true,
-    "declarationDir": "./core/typings"
+    "module": "none"
   },
-  "files": ["core/Alloybot.ts", "core/lib/ConfigBuilder.ts", "core/lib/Util.ts", "core/lib/Common.ts"],
-  "references": [
-    { "path": "core/plugins/" }
-  ]
+  "files": ["core/Alloybot.ts", "core/lib/ConfigBuilder.ts", "core/lib/Util.ts", "core/lib/Common.ts"]
 }
