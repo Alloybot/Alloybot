@@ -4,5 +4,5 @@
     "target": "es2018",
     "module": "none"
   },
-  "files": ["core/Alloybot.ts", "core/lib/ConfigBuilder.ts", "core/lib/Util.ts", "core/lib/Common.ts"]
+  "files": ["core/Alloybot.ts", "core/lib/ConfigBuilder.ts", "core/lib/Util.ts", "core/lib/IFace.ts"]
 }

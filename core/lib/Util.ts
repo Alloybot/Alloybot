@@ -56,6 +56,7 @@ class PluginLoader {
     fs.readdir(path.join(__dirname, this.root), (error, plugins) => {
       if (error) this.logger.error(error);
       plugins.forEach(_plugin => {
+        if (path.parse(_plugin).name == 'Install') return;
         let pluginpath = path.join(this.root, _plugin);
         let _package = require(path.join(pluginpath, 'package.json'));
 
@@ -69,40 +70,4 @@ class PluginLoader {
   }
 }
 
-class Setup {
-  private root = '../plugins';
-  private logger = new Logger('Init');
-  constructor() {
-    fs.readdir(path.join(__dirname, this.root), (error, plugins) => {
-      if (error) this.logger.error(error);
-      plugins.forEach(_plugin => {
-        let pluginpath = path.join(this.root, _plugin);
-        let stats = fs.lstatSync(path.join(__dirname, pluginpath));
-        if (!stats.isDirectory()) return;
-
-        let packageLock = require(path.join(pluginpath, 'package-lock.json'));
-        process.chdir(path.join(__dirname, pluginpath));
-
-        if (packageLock.dependencies && !fs.existsSync('node_modules')) {
-          exec('npm install', (npmerror, npmout, npmerr) => {
-            if (npmerror) this.logger.error(npmerror);
-            this.logger.info(`Installing ${_plugin}`);
-          });
-          exec('npm run build', (tscerror, tscout, tscerr) => {
-            if (tscerror) this.logger.error(tscerror);
-            this.logger.info(`Building ${_plugin}`);
-          });
-          new PluginLoader();
-        } else {
-          exec('npm run build', (tscerror, tscout, tscerr) => {
-            if (tscerror) this.logger.error(tscerror);
-            this.logger.info(`Building ${_plugin}`);
-          });
-          new PluginLoader();
-        }
-      });
-    });
-  }
-}
-
-export { Setup, ClassLoader, Logger }
+export { PluginLoader, ClassLoader, Logger }

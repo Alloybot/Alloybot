@@ -2,12 +2,12 @@
   "name": "@alloybot/alloybot",
   "version": "0.0.0",
   "description": "Multipurpose any-bot. Let your imagination run wild.",
-  "main": "Alloybot.ts",
+  "main": "./core/Alloybot.js",
   "scripts": {
-    "start": "node core/Alloybot.js",
-    "watch": "tsc -b --clean --watch tsconfig.json",
-    "build": "tsc -b --verbose tsconfig.json",
-    "clean": "tsc -b --clean tsconfig.json"
+    "clean": "tsc -b --clean tsconfig.json",
+    "build": "tsc -b tsconfig.json",
+    "prestart": "node ./core/bin/Setup.js",
+    "start": "node ./core/Alloybot.js"
   },
   "repository": {
     "type": "git",

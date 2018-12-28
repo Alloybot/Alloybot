@@ -1,31 +1,31 @@
 import * as event from 'events';
 import * as Util from './lib/Util';
-import * as Type from './lib/Common';
+import * as IFace from './lib/IFace';
 import { ConfigBuilder } from './lib/ConfigBuilder';
 
 class Alloybot extends event.EventEmitter {
-  public name: string = require('./config/Alloybot').name;
-  public connections = new Map<string, Type.IConnection>();
-  public plugins = new Map<string, Type.IPlugin>();
+  public Name: string = 'Alloybot';
+  public static Connections = new Map<string, IFace.IConnection>();
+  public static Plugins = new Map<string, IFace.IPlugin>();
 
-  private logger = new Util.Logger(this.name);
+  private logger = new Util.Logger(this.Name);
   private config = new ConfigBuilder('Alloybot', require('../package.json').version);
 
   constructor() {
     super();
-    new Util.Setup();
-    this.emit('started', this.name);
+    this.emit('started', this.Name);
     this.config.addOption('name', ['string'], 'Name of the bot.');
     this.config.close();
+    this.Name = this.config.getConfig().name;
   }
 
   private areDependenciesLoaded(name: string): boolean {
-    let dependencyList = this.plugins.get(name).dependencies,
+    let dependencyList = Alloybot.Plugins.get(name).getDependencies(),
       loadedDeps = [],
       missingDeps = [];
 
     for (let dep in dependencyList) {
-      if (this.plugins.has(dep)) {
+      if (Alloybot.Plugins.has(dep)) {
         loadedDeps.push(dep);
       } else {
         missingDeps.push(dep);
@@ -44,81 +44,81 @@ class Alloybot extends event.EventEmitter {
     }
   }
 
-  public getDependants(name: string): Type.IPlugin[] {
+  public getDependants(name: string): IFace.IPlugin[] {
     let dependants = [];
-    for (let plugin in this.plugins) {
-      for (let dep in this.plugins.get(plugin).dependencies) {
-        if (dep == name) dependants.push(this.plugins.get(plugin));
+    for (let plugin in Alloybot.Plugins) {
+      for (let dep in Alloybot.Plugins.get(plugin).getDependencies()) {
+        if (dep == name) dependants.push(Alloybot.Plugins.get(plugin));
       }
     }
-    for (let connection in this.connections) {
-      for (let dep in this.connections.get(connection).dependencies) {
-        if (dep == name) dependants.push(this.connections.get(connection));
+    for (let connection in Alloybot.Connections) {
+      for (let dep in Alloybot.Connections.get(connection).getDependencies()) {
+        if (dep == name) dependants.push(Alloybot.Connections.get(connection));
       }
     }
     return dependants;
   }
 
-  public isPluginLoaded(plugin: Type.IPlugin): boolean;
+  public isPluginLoaded(plugin: IFace.IPlugin): boolean;
   public isPluginLoaded(plugin: string): boolean;
   public isPluginLoaded(plugin): boolean {
     if (typeof plugin == 'string') {
-      return this.plugins.has(plugin);
+      return Alloybot.Plugins.has(plugin);
     } else {
-      return this.plugins.has(plugin.name);
+      return Alloybot.Plugins.has(plugin.getName());
     }
   }
 
-  public registerPlugin(plugin: Type.IPlugin): void {
-    if (this.plugins.has(plugin.name)) {
-      this.emit('plugin.duplicate', plugin.name);
+  public registerPlugin(plugin: IFace.IPlugin): void {
+    if (Alloybot.Plugins.has(plugin.getName())) {
+      this.emit('plugin.duplicate', plugin.getName());
     } else {
-      this.plugins.set(plugin.name, plugin);
+      Alloybot.Plugins.set(plugin.getName(), plugin);
       this.emit('plugin.registered', plugin);
     }
   }
 
   public getPluginCount(): number {
-    return this.plugins.size;
+    return Alloybot.Plugins.size;
   }
 
-  public getPlugins(): Map<string, Type.IPlugin> {
-    return this.plugins;
+  public getPlugins(): Map<string, IFace.IPlugin> {
+    return Alloybot.Plugins;
   }
 
   public getPlugin(name: string): any {
-    if (this.areDependenciesLoaded(name)) return this.plugins.get(name);
+    if (this.areDependenciesLoaded(name)) return Alloybot.Plugins.get(name);
   }
 
-  public registerConnection(connection: Type.IConnection): void {
-    if (this.connections.has(connection.name)) {
-      this.emit('connection.duplicate', connection.name);
+  public registerConnection(connection: IFace.IConnection): void {
+    if (Alloybot.Connections.has(connection.getName())) {
+      this.emit('connection.duplicate', connection.getName());
     } else {
-      this.connections.set(connection.name, connection.connection);
+      Alloybot.Connections.set(connection.getName(), connection.getConnection());
       this.emit('connection.registered', connection);
     }
   }
 
-  public isConnectionLoaded(connection: Type.IConnection): boolean;
+  public isConnectionLoaded(connection: IFace.IConnection): boolean;
   public isConnectionLoaded(connection: string): boolean;
   public isConnectionLoaded(connection): boolean {
     if (typeof connection == 'string') {
-      return this.connections.has(connection);
+      return Alloybot.Connections.has(connection);
     } else {
-      return this.connections.has(connection.name);
+      return Alloybot.Connections.has(connection.getName());
     }
   }
 
   public getConnectionCount(): number {
-    return this.connections.size;
+    return Alloybot.Connections.size;
   }
 
-  public getConnections(): Map<string, Type.IConnection> {
-    return this.connections;
+  public getConnections(): Map<string, IFace.IConnection> {
+    return Alloybot.Connections;
   }
 
   public getConnection(name: string): any {
-    if (this.areDependenciesLoaded(name)) return this.connections.get(name);
+    if (this.areDependenciesLoaded(name)) return Alloybot.Connections.get(name);
   }
 }
 
@@ -131,12 +131,12 @@ INSTANCE.on('started', name => {
 });
 
 INSTANCE.on('plugin.registered', plugin => {
-  logger.info('Plugin Registered: ' + plugin.name);
+  logger.info('Plugin Registered: ' + plugin.getName());
 });
 
 INSTANCE.on('connection.registered', connection => {
-  logger.info('Connection Registered: ' + connection.name);
+  logger.info('Connection Registered: ' + connection.getName());
 });
 
 export default INSTANCE;
-export { Type, Util, ConfigBuilder }
+export { IFace, Util, ConfigBuilder }
