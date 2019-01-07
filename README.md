@@ -1,9 +1,9 @@
 ## Readme rewrite and documentation coming soon.
 
 # Alloybot Core
-[![Security](http://sq.taylorstapleton.ca/api/project_badges/measure?project=AlloybotCore&metric=security_rating)](http://sq.taylorstapleton.ca/dashboard?id=AlloybotCore)
-[![Maintainability](http://sq.taylorstapleton.ca/api/project_badges/measure?project=AlloybotCore&metric=sqale_rating)](http://sq.taylorstapleton.ca/dashboard?id=AlloybotCore)
-[![Lines of Code](http://sq.taylorstapleton.ca/api/project_badges/measure?project=AlloybotCore&metric=ncloc)](http://sq.taylorstapleton.ca/dashboard?id=AlloybotCore)
+[![Security](http://sq.taylorstapleton.ca/api/project_badges/measure?project=NodeJS_AlloybotCore&metric=security_rating)](http://sq.taylorstapleton.ca/dashboard?id=NodeJS_AlloybotCore)
+[![Maintainability](http://sq.taylorstapleton.ca/api/project_badges/measure?project=NodeJS_AlloybotCore&metric=sqale_rating)](http://sq.taylorstapleton.ca/dashboard?id=NodeJS_AlloybotCore)
+[![Lines of Code](http://sq.taylorstapleton.ca/api/project_badges/measure?project=NodeJS_AlloybotCore&metric=ncloc)](http://sq.taylorstapleton.ca/dashboard?id=NodeJS_AlloybotCore)
 
 ## Powerful and Versatile Module Loader
 
